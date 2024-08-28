@@ -17,13 +17,17 @@ window.addEventListener("load", function () {
         }
         // 获取书签
         loadBookmark();
+        // 响应式显示抽屉栏
+        setTimeout(function () {
+            document.documentElement.clientWidth >= 840 ? (document.querySelector("#drawer").open = true) : undefined;
+        }, 300);
     } else {
         document.querySelector("#setupPermission").open = true;
     }
     // 申请存储权限回调
     window.webapp.behold("navigation.reload();");
     // 获取版本信息
-    document.querySelector("#version").innerText = window.webapp.getpage() + " (" + window.webapp.getcode() + ")";
+    document.querySelector("#version").innerText = "Version " + window.webapp.getpage() + " (" + window.webapp.getcode() + ")";
     // 初始化对话框
     document.querySelector("#newItemDialog").addEventListener("open", function () {
         document.querySelector("#newItemType").value = "folder";
@@ -366,8 +370,10 @@ function setPath() {
 }
 // 打开抽屉栏中的文件夹 / 定位到抽屉栏中的文件
 function openDrawerItem(item) {
+    // 获取页面宽度
+    var pageWidth = document.documentElement.clientWidth;
     // 响应式隐藏抽屉栏
-    if (screen.width < 840) {
+    if (pageWidth < 840) {
         document.querySelector("#drawer").open = false;
     }
     // 避免抽屉栏关闭动画卡顿
@@ -380,7 +386,7 @@ function openDrawerItem(item) {
                 highlightItem(item.slice(item.lastIndexOf("/") + 1, item.length));
             }, 300);
         }
-    }, screen.width < 840 ? 250 : 0);
+    }, pageWidth < 840 ? 250 : 0);
 }
 // 根据文件后缀名匹配图标
 icons = [

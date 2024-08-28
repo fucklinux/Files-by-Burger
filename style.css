@@ -1,12 +1,17 @@
-/* 全局无衬线字体 */
+/* 全局无衬线字体 & 平滑滚动 */
 * {
     font-family: Sans-serif;
+    scroll-behavior: smooth;
 }
 
-/* 平滑滚动 */
+/* 页面整体布局 */
 html,
 body {
-    scroll-behavior: smooth;
+    margin: 0;
+}
+
+mdui-layout {
+    height: 100vh !important;
 }
 
 /* 列表项强制换行 */
@@ -16,9 +21,15 @@ mdui-list-item {
 
 /* 卡片样式 */
 .card {
-    width: 95%;
-    margin-left: 2.5%;
+    width: 90%;
+    margin-left: 5%;
     margin-top: 24px;
+}
+
+#multipleSelectDialog .card,
+#settings .card {
+    width: 100%;
+    margin-left: 0;
 }
 
 /* 触摸屏链接样式 */
@@ -34,23 +45,15 @@ mdui-top-app-bar-title {
 /* 响应式 */
 @media(min-width:640px) {
     .card {
-        width: 70%;
-        margin-left: 15%;
+        width: 80% !important;
+        margin-left: 10% !important;
         margin-top: 32px;
-    }
-}
-
-@media(min-width:840px) {
-
-    /* 抽屉栏避免遮挡 */
-    #drawer mdui-list {
-        margin-top: 64px;
     }
 }
 
 @media(min-width:960px) {
     .card {
-        width: 50%;
-        margin-left: 25%;
+        width: 65% !important;
+        margin-left: 17.5% !important;
     }
 }

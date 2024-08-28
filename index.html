@@ -13,64 +13,71 @@
     <script src="script.js"></script>
 </head>
 
-<body class="mdui-theme-auto">
-    <!-- 顶部应用栏 -->
-    <mdui-top-app-bar scroll-behavior="elevate">
-        <mdui-button-icon icon="menu"
-            onclick="document.querySelector('#drawer').open = this.open ? false : true;"></mdui-button-icon>
-        <mdui-top-app-bar-title style="cursor: pointer;" onclick="window.scrollTo(0, 0);">Files by
-            Burger</mdui-top-app-bar-title>
-        <div style="flex-grow: 1"></div>
-        <mdui-tooltip content="搜索">
-            <mdui-button-icon icon="search"
-                onclick="document.querySelector('#searchItemDialog').open = true;"></mdui-button-icon>
-        </mdui-tooltip>
-        <mdui-dropdown>
-            <mdui-button-icon slot="trigger" icon="sort"></mdui-button-icon>
-            <mdui-menu selects="single" id="set_sortBy">
-                <mdui-menu-item value="default" onclick="changeSettings('sortBy', this.value);">默认</mdui-menu-item>
-                <mdui-menu-item value="default_reverse"
-                    onclick="changeSettings('sortBy', this.value);">默认-降序</mdui-menu-item>
-                <mdui-menu-item value="name" onclick="changeSettings('sortBy', this.value);">名称</mdui-menu-item>
-                <mdui-menu-item value="name_reverse"
-                    onclick="changeSettings('sortBy', this.value);">名称-降序</mdui-menu-item>
-            </mdui-menu>
-        </mdui-dropdown>
-        <mdui-dropdown>
-            <mdui-button-icon slot="trigger" icon="more_vert"></mdui-button-icon>
-            <mdui-menu>
-                <mdui-menu-item icon="refresh"
-                    onclick="loadFiles(document.querySelector('#path').innerText);">刷新</mdui-menu-item>
-                <mdui-menu-item icon="keyboard_return"
-                    onclick="document.querySelector('#setPathDialog').open = true;">跳转</mdui-menu-item>
-                <mdui-menu-item icon="checklist_rtl"
-                    onclick="document.querySelector('#multipleSelectDialog').open = true;">多选</mdui-menu-item>
-                <mdui-menu-item icon="settings"
-                    onclick="document.querySelector('#settings').open = true;">选项</mdui-menu-item>
-                <mdui-menu-item icon="info" onclick="document.querySelector('#about').open = true;">关于</mdui-menu-item>
-                <mdui-menu-item icon="exit_to_app" onclick="window.webapp.secede();">退出</mdui-menu-item>
-            </mdui-menu>
-        </mdui-dropdown>
-    </mdui-top-app-bar>
-    <!-- 侧边抽屉栏 -->
-    <mdui-navigation-drawer id="drawer" close-on-overlay-click>
-        <mdui-list style="padding-left: 8px;padding-right: 8px;">
-            <div style="margin: 8px;opacity: 0.75;">设备</div>
-            <mdui-list-item rounded icon="phone_android" headline="根目录" description="/"
-                onclick="openDrawerItem(this.description);"></mdui-list-item>
-            <mdui-list-item rounded icon="sd_storage" headline="内部存储" description="/storage/emulated/0/"
-                onclick="openDrawerItem(this.description);"></mdui-list-item>
-            <div style="margin: 8px;opacity: 0.75;" id="bookmarkText"></div>
-            <div id="bookmark"></div>
-        </mdui-list>
-    </mdui-navigation-drawer>
-    <!-- 页面主体 -->
-    <div class="card">
-        <div id="path" style="margin-bottom: 16px;word-wrap: break-word;" onclick="copyHandle(this.innerText);"></div>
-        <mdui-card style="width: 100%;" variant="elevated">
-            <mdui-list id="fileList" style="transition: 0.2s;padding-left: 8px;padding-right: 8px;"></mdui-list>
-        </mdui-card>
-    </div>
+<body class="mdui-theme-auto" style="background: rgba(0, 0, 0, 0) !important;">
+    <mdui-layout>
+        <!-- 顶部应用栏 -->
+        <mdui-top-app-bar scroll-behavior="elevate" scroll-target="mdui-layout-main">
+            <mdui-button-icon icon="menu"
+                onclick="document.querySelector('#drawer').open = document.querySelector('#drawer').open ? false : true;"></mdui-button-icon>
+            <mdui-top-app-bar-title style="cursor: pointer;"
+                onclick="document.querySelector('mdui-layout-main').scrollTo(0, 0);">Files by
+                Burger</mdui-top-app-bar-title>
+            <div style="flex-grow: 1"></div>
+            <mdui-tooltip content="搜索">
+                <mdui-button-icon icon="search"
+                    onclick="document.querySelector('#searchItemDialog').open = true;"></mdui-button-icon>
+            </mdui-tooltip>
+            <mdui-dropdown>
+                <mdui-button-icon slot="trigger" icon="sort"></mdui-button-icon>
+                <mdui-menu selects="single" id="set_sortBy">
+                    <mdui-menu-item value="default" onclick="changeSettings('sortBy', this.value);">默认</mdui-menu-item>
+                    <mdui-menu-item value="default_reverse"
+                        onclick="changeSettings('sortBy', this.value);">默认-降序</mdui-menu-item>
+                    <mdui-menu-item value="name" onclick="changeSettings('sortBy', this.value);">名称</mdui-menu-item>
+                    <mdui-menu-item value="name_reverse"
+                        onclick="changeSettings('sortBy', this.value);">名称-降序</mdui-menu-item>
+                </mdui-menu>
+            </mdui-dropdown>
+            <mdui-dropdown>
+                <mdui-button-icon slot="trigger" icon="more_vert"></mdui-button-icon>
+                <mdui-menu>
+                    <mdui-menu-item icon="refresh"
+                        onclick="loadFiles(document.querySelector('#path').innerText);">刷新</mdui-menu-item>
+                    <mdui-menu-item icon="keyboard_return"
+                        onclick="document.querySelector('#setPathDialog').open = true;">跳转</mdui-menu-item>
+                    <mdui-menu-item icon="checklist_rtl"
+                        onclick="document.querySelector('#multipleSelectDialog').open = true;">多选</mdui-menu-item>
+                    <mdui-menu-item icon="settings"
+                        onclick="document.querySelector('#settings').open = true;">选项</mdui-menu-item>
+                    <mdui-menu-item icon="info"
+                        onclick="document.querySelector('#about').open = true;">关于</mdui-menu-item>
+                    <mdui-menu-item icon="exit_to_app" onclick="window.webapp.secede();">退出</mdui-menu-item>
+                </mdui-menu>
+            </mdui-dropdown>
+        </mdui-top-app-bar>
+        <!-- 侧边抽屉栏 -->
+        <mdui-navigation-drawer id="drawer" close-on-overlay-click>
+            <mdui-list style="padding-left: 8px;padding-right: 8px;">
+                <div style="margin: 8px;opacity: 0.75;">设备</div>
+                <mdui-list-item rounded icon="phone_android" headline="根目录" description="/"
+                    onclick="openDrawerItem(this.description);"></mdui-list-item>
+                <mdui-list-item rounded icon="sd_storage" headline="内部存储" description="/storage/emulated/0/"
+                    onclick="openDrawerItem(this.description);"></mdui-list-item>
+                <div style="margin: 8px;opacity: 0.75;" id="bookmarkText"></div>
+                <div id="bookmark"></div>
+            </mdui-list>
+        </mdui-navigation-drawer>
+        <!-- 页面主体 -->
+        <mdui-layout-main>
+            <div class="card" style="margin-bottom: 16px;">
+                <div id="path" style="margin-bottom: 16px;word-wrap: break-word;" onclick="copyHandle(this.innerText);">
+                </div>
+                <mdui-card style="width: 100%;" variant="elevated">
+                    <mdui-list id="fileList" style="transition: 0.2s;padding-left: 8px;padding-right: 8px;"></mdui-list>
+                </mdui-card>
+            </div>
+        </mdui-layout-main>
+    </mdui-layout>
     <!-- 浮动操作按钮 -->
     <mdui-fab icon="add" style="position: fixed;right: 24px;bottom: 24px;z-index: 1;"
         onclick="document.querySelector('#newItemDialog').open = true;" id="FAB"></mdui-fab>
@@ -165,7 +172,7 @@
                 onclick="document.querySelector('#settings').open = false;"></mdui-button-icon>
             <mdui-top-app-bar-title>选项</mdui-top-app-bar-title>
         </mdui-top-app-bar>
-        <div class="card" style="padding-top: 32px;">
+        <div class="card" style="padding-top: 32px;margin-bottom: 16px;">
             <mdui-card style="width: 100%;" variant="elevated">
                 <mdui-list>
                     <mdui-dropdown placement="bottom-end">
