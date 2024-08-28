@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0">
+    <title>Files by Burger</title>
+    <link rel="stylesheet" href="mdui/mdui.css">
+    <script src="mdui/mdui.global.js"></script>
+    <link rel="stylesheet" href="material-icons/material-icons.css">
+    <link rel="shortcut icon" href="favicon.png" type="image/x-icon">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+</head>
+
+<body class="mdui-theme-auto">
+    <!-- 顶部应用栏 -->
+    <mdui-top-app-bar scroll-behavior="elevate">
+        <mdui-button-icon icon="menu"
+            onclick="document.querySelector('#drawer').open = this.open ? false : true;"></mdui-button-icon>
+        <mdui-top-app-bar-title style="cursor: pointer;" onclick="window.scrollTo(0, 0);">Files by
+            Burger</mdui-top-app-bar-title>
+        <div style="flex-grow: 1"></div>
+        <mdui-tooltip content="搜索">
+            <mdui-button-icon icon="search"
+                onclick="document.querySelector('#searchItemDialog').open = true;"></mdui-button-icon>
+        </mdui-tooltip>
+        <mdui-dropdown>
+            <mdui-button-icon slot="trigger" icon="sort"></mdui-button-icon>
+            <mdui-menu selects="single" id="set_sortBy">
+                <mdui-menu-item value="default" onclick="changeSettings('sortBy', this.value);">默认</mdui-menu-item>
+                <mdui-menu-item value="default_reverse"
+                    onclick="changeSettings('sortBy', this.value);">默认-降序</mdui-menu-item>
+                <mdui-menu-item value="name" onclick="changeSettings('sortBy', this.value);">名称</mdui-menu-item>
+                <mdui-menu-item value="name_reverse"
+                    onclick="changeSettings('sortBy', this.value);">名称-降序</mdui-menu-item>
+            </mdui-menu>
+        </mdui-dropdown>
+        <mdui-dropdown>
+            <mdui-button-icon slot="trigger" icon="more_vert"></mdui-button-icon>
+            <mdui-menu>
+                <mdui-menu-item icon="refresh"
+                    onclick="loadFiles(document.querySelector('#path').innerText);">刷新</mdui-menu-item>
+                <mdui-menu-item icon="keyboard_return"
+                    onclick="document.querySelector('#setPathDialog').open = true;">跳转</mdui-menu-item>
+                <mdui-menu-item icon="checklist_rtl"
+                    onclick="document.querySelector('#multipleSelectDialog').open = true;">多选</mdui-menu-item>
+                <mdui-menu-item icon="settings"
+                    onclick="document.querySelector('#settings').open = true;">选项</mdui-menu-item>
+                <mdui-menu-item icon="info" onclick="document.querySelector('#about').open = true;">关于</mdui-menu-item>
+                <mdui-menu-item icon="exit_to_app" onclick="window.webapp.secede();">退出</mdui-menu-item>
+            </mdui-menu>
+        </mdui-dropdown>
+    </mdui-top-app-bar>
+    <!-- 侧边抽屉栏 -->
+    <mdui-navigation-drawer id="drawer" close-on-overlay-click>
+        <mdui-list style="padding-left: 8px;padding-right: 8px;">
+            <div style="margin: 8px;opacity: 0.75;">设备</div>
+            <mdui-list-item rounded icon="phone_android" headline="根目录" description="/"
+                onclick="openDrawerItem(this.description);"></mdui-list-item>
+            <mdui-list-item rounded icon="sd_storage" headline="内部存储" description="/storage/emulated/0/"
+                onclick="openDrawerItem(this.description);"></mdui-list-item>
+            <div style="margin: 8px;opacity: 0.75;" id="bookmarkText"></div>
+            <div id="bookmark"></div>
+        </mdui-list>
+    </mdui-navigation-drawer>
+    <!-- 页面主体 -->
+    <div class="card">
+        <div id="path" style="margin-bottom: 16px;word-wrap: break-word;" onclick="copyHandle(this.innerText);"></div>
+        <mdui-card style="width: 100%;" variant="elevated">
+            <mdui-list id="fileList" style="transition: 0.2s;padding-left: 8px;padding-right: 8px;"></mdui-list>
+        </mdui-card>
+    </div>
+    <!-- 浮动操作按钮 -->
+    <mdui-fab icon="add" style="position: fixed;right: 24px;bottom: 24px;z-index: 1;"
+        onclick="document.querySelector('#newItemDialog').open = true;" id="FAB"></mdui-fab>
+    <!-- 对话框 -->
+    <mdui-dialog headline="新建..." close-on-overlay-click id="newItemDialog">
+        <mdui-segmented-button-group full-width selects="single" id="newItemType">
+            <mdui-segmented-button value="folder" icon="create_new_folder">文件夹</mdui-segmented-button>
+            <mdui-segmented-button value="file" icon="note_add">文件</mdui-segmented-button>
+        </mdui-segmented-button-group>
+        <mdui-text-field variant="filled" label="项目名称" style="margin-top: 16px;" id="newItemName"></mdui-text-field>
+        <mdui-button slot="action" variant="text"
+            onclick="document.querySelector('#newItemDialog').open = false;">取消</mdui-button>
+        <mdui-button slot="action" variant="filled" onclick="newItem();">确定</mdui-button>
+    </mdui-dialog>
+    <mdui-dialog close-on-overlay-click id="itemMenuDialog" headline="操作">
+        <mdui-list>
+            <mdui-list-item rounded headline="复制完整路径" icon="content_copy" onclick="copyItemPath();"></mdui-list-item>
+            <mdui-list-item rounded headline="添加书签" icon="bookmark_add" onclick="addBookmark();"></mdui-list-item>
+            <mdui-list-item rounded headline="重命名" icon="edit" onclick="renameItem();"></mdui-list-item>
+            <mdui-list-item rounded headline="删除" icon="delete" onclick="deleteItem();"></mdui-list-item>
+        </mdui-list>
+        <mdui-button slot="action" variant="text"
+            onclick="document.querySelector('#itemMenuDialog').open = false;">取消</mdui-button>
+    </mdui-dialog>
+    <mdui-dialog headline="重命名" close-on-overlay-click id="renameItemDialog">
+        <mdui-text-field variant="filled" label="新的名称" id="renameItemName"></mdui-text-field>
+        <mdui-button slot="action" variant="text"
+            onclick="document.querySelector('#renameItemDialog').open = false;">取消</mdui-button>
+        <mdui-button slot="action" variant="filled" onclick="renameItem(true);">确定</mdui-button>
+    </mdui-dialog>
+    <mdui-dialog headline="删除" close-on-overlay-click id="deleteItemDialog">
+        <mdui-button slot="action" variant="text"
+            onclick="document.querySelector('#deleteItemDialog').open = false;">取消</mdui-button>
+        <mdui-button slot="action" variant="filled"
+            onclick="document.querySelector('#deleteItemDialog').open = false;document.querySelector('#deleteItemDialog_2').open = true;">确定</mdui-button>
+    </mdui-dialog>
+    <mdui-dialog headline="删除" close-on-overlay-click id="deleteItemDialog_2">
+        <mdui-button slot="action" variant="filled" onclick="deleteItem(true);">确定</mdui-button>
+        <mdui-button slot="action" variant="text"
+            onclick="document.querySelector('#deleteItemDialog_2').open = false;">取消</mdui-button>
+    </mdui-dialog>
+    <mdui-dialog headline="批量删除" close-on-overlay-click id="multipleDeleteDialog">
+        <mdui-button slot="action" variant="text"
+            onclick="document.querySelector('#multipleDeleteDialog').open = false;">取消</mdui-button>
+        <mdui-button slot="action" variant="filled"
+            onclick="document.querySelector('#multipleDeleteDialog').open = false;document.querySelector('#multipleDeleteDialog_2').open = true;">确定</mdui-button>
+    </mdui-dialog>
+    <mdui-dialog headline="批量删除" close-on-overlay-click id="multipleDeleteDialog_2">
+        <mdui-button slot="action" variant="filled" onclick="multipleOperate('delete', true);">确定</mdui-button>
+        <mdui-button slot="action" variant="text"
+            onclick="document.querySelector('#multipleDeleteDialog_2').open = false;">取消</mdui-button>
+    </mdui-dialog>
+    <mdui-dialog headline="移除书签" close-on-overlay-click id="deleteBookmarkDialog">
+        <mdui-button slot="action" variant="text"
+            onclick="document.querySelector('#deleteBookmarkDialog').open = false;">取消</mdui-button>
+        <mdui-button slot="action" variant="filled" onclick="removeBookmark(selectedBookmark);">确定</mdui-button>
+    </mdui-dialog>
+    <mdui-dialog headline="授予权限" description="“Files by Burger”用于浏览和管理手机存储的文件，因此需要被授予所有文件的管理权限。" id="setupPermission">
+        <mdui-button slot="action" variant="text" onclick="window.webapp.secede();">退出</mdui-button>
+        <mdui-button slot="action" variant="filled"
+            onclick="document.querySelector('#setupPermission').open = false;window.setTimeout('window.webapp.rights()', 500);">确定</mdui-button>
+    </mdui-dialog>
+    <mdui-dialog headline="关于" close-on-overlay-click id="about">
+        <div style="text-align: center;">
+            <img src="favicon.png" alt="Files by Burger logo" style="width: 64px;height: 64px;">
+            <div>Files by Burger</div>
+            <div id="version" style="opacity: 0.5;"></div>
+        </div>
+        <div style="margin-top: 16px;" class="mdui-prose">基于 Web 的文件管理器。<br>开发者：Burger Studio<br>前端框架：<a
+                href="javascript:window.webapp.browse('https://www.mdui.org/');">MDUI</a><br>开发工具：WebIDE<br><a
+                href="javascript:window.webapp.browse('https://github.com/fucklinux/Files-by-Burger');">在
+                GitHub 中查看</a></div>
+        <mdui-button slot="action" variant="text"
+            onclick="document.querySelector('#about').open = false;">关闭</mdui-button>
+    </mdui-dialog>
+    <mdui-dialog headline="搜索" description="在当前目录下查找项目：" close-on-overlay-click id="searchItemDialog">
+        <mdui-text-field variant="filled" label="关键字" id="searchKeyword" clearable></mdui-text-field>
+        <mdui-checkbox id="searchMatchCase">区分大小写</mdui-checkbox>
+        <mdui-button slot="action" variant="text"
+            onclick="document.querySelector('#searchItemDialog').open = false;">取消</mdui-button>
+        <mdui-button slot="action" variant="filled" onclick="searchItem();">确定</mdui-button>
+    </mdui-dialog>
+    <mdui-dialog headline="跳转" description="跳转到路径：" close-on-overlay-click id="setPathDialog">
+        <mdui-text-field variant="filled" label="路径" id="pathInput"></mdui-text-field>
+        <mdui-button slot="action" variant="text"
+            onclick="document.querySelector('#setPathDialog').open = false;">取消</mdui-button>
+        <mdui-button slot="action" variant="filled" onclick="setPath();">确定</mdui-button>
+    </mdui-dialog>
+    <mdui-dialog fullscreen id="settings">
+        <mdui-top-app-bar slot="header" scroll-target="#settings">
+            <mdui-button-icon icon="close"
+                onclick="document.querySelector('#settings').open = false;"></mdui-button-icon>
+            <mdui-top-app-bar-title>选项</mdui-top-app-bar-title>
+        </mdui-top-app-bar>
+        <div class="card" style="padding-top: 32px;">
+            <mdui-card style="width: 100%;" variant="elevated">
+                <mdui-list>
+                    <mdui-dropdown placement="bottom-end">
+                        <mdui-list-item slot="trigger" headline="启动目录" id="set_bootDirectory"></mdui-list-item>
+                        <mdui-menu>
+                            <mdui-menu-item
+                                onclick="changeSettings('bootDirectory', '/storage/emulated/0/');">/storage/emulated/0/（默认）</mdui-menu-item>
+                            <mdui-menu-item onclick="changeSettings('bootDirectory', '/');">/</mdui-menu-item>
+                            <mdui-menu-item
+                                onclick="changeSettings('bootDirectory', document.querySelector('#path').innerText);">当前目录</mdui-menu-item>
+                            <mdui-menu-item
+                                onclick="changeSettings('bootDirectory', '上次打开的目录');">上次打开的目录</mdui-menu-item>
+                        </mdui-menu>
+                    </mdui-dropdown>
+                    <mdui-list-item headline="显示隐藏的项目" description="显示以“.”开头的项目">
+                        <mdui-switch slot="end-icon" id="set_showHidden" onclick="updateSettings();"></mdui-switch>
+                    </mdui-list-item>
+                    <mdui-list-item headline="文件夹在前" description="将所有文件夹置于文件之前">
+                        <mdui-switch slot="end-icon" id="set_foldersFirst" onclick="updateSettings();"></mdui-switch>
+                    </mdui-list-item>
+                    <mdui-list-item headline="统计文件夹子项目数" description="启用后可能影响性能">
+                        <mdui-switch slot="end-icon" id="set_itemsCount" onclick="updateSettings();"></mdui-switch>
+                    </mdui-list-item>
+                    <mdui-list-item headline="启用动画效果" description="文件列表淡出淡入">
+                        <mdui-switch slot="end-icon" id="set_showAnimation" onclick="updateSettings();"></mdui-switch>
+                    </mdui-list-item>
+                    <mdui-list-item headline="半透明 FAB" description="半透明悬浮操作按钮">
+                        <mdui-switch slot="end-icon" id="set_translucentFAB" onclick="updateSettings();"></mdui-switch>
+                    </mdui-list-item>
+                    <mdui-list-item headline="恢复默认" description="将以上所有选项还原为默认值"
+                        onclick="localStorage.removeItem('settings');loadSettings();document.querySelector('#restored').open = true;"></mdui-list-item>
+                </mdui-list>
+            </mdui-card>
+        </div>
+    </mdui-dialog>
+    <mdui-dialog fullscreen id="multipleSelectDialog">
+        <mdui-top-app-bar slot="header" scroll-target="#multipleSelectDialog">
+            <mdui-button-icon icon="close"
+                onclick="document.querySelector('#multipleSelectDialog').open = false;"></mdui-button-icon>
+            <mdui-top-app-bar-title>多选</mdui-top-app-bar-title>
+            <div style="flex-grow: 1"></div>
+            <mdui-button-icon icon="check_circle_outline" onclick="multipleSelect('selectAll');"></mdui-button-icon>
+            <mdui-button-icon icon="check_circle" onclick="multipleSelect('selectInverse');"></mdui-button-icon>
+            <mdui-button-icon icon="radio_button_unchecked" onclick="multipleSelect('cancelAll');"></mdui-button-icon>
+        </mdui-top-app-bar>
+        <div class="card" style="padding-top: 24px;height: calc(100vh - 168px);">
+            <mdui-card style="width: 100%;height: calc(100% - 4px);overflow-y: scroll;" variant="elevated">
+                <mdui-list id="multipleSelectList"></mdui-list>
+            </mdui-card>
+        </div>
+        <mdui-button slot="action" variant="filled" onclick="multipleOperate('delete');" icon="delete">删除</mdui-button>
+    </mdui-dialog>
+    <!-- 消息条 -->
+    <mdui-snackbar closeable id="copied">已复制到剪贴板</mdui-snackbar>
+    <mdui-snackbar closeable id="invalidItemType">请选择项目类型</mdui-snackbar>
+    <mdui-snackbar closeable id="invalidItemName">请填写项目名称</mdui-snackbar>
+    <mdui-snackbar closeable id="invalidRenameItemName">请填写新的名称</mdui-snackbar>
+    <mdui-snackbar closeable id="invalidPath">请填写路径</mdui-snackbar>
+    <mdui-snackbar closeable id="itemExists">已存在同名项目</mdui-snackbar>
+    <mdui-snackbar closeable id="noSelected">未选中任何项目</mdui-snackbar>
+    <mdui-snackbar closeable id="created">创建完成</mdui-snackbar>
+    <mdui-snackbar closeable id="renamed">重命名完成</mdui-snackbar>
+    <mdui-snackbar closeable id="deleted">删除完成</mdui-snackbar>
+    <mdui-snackbar closeable id="restored">已恢复至默认设置</mdui-snackbar>
+    <mdui-snackbar closeable id="addedBookmark">已添加书签</mdui-snackbar>
+    <mdui-snackbar closeable id="removedBookmark">已移除书签</mdui-snackbar>
+    <mdui-snackbar closeable id="multipleOperationStatus"></mdui-snackbar>
+    <mdui-snackbar closeable id="error"></mdui-snackbar>
+</body>
+
+</html>

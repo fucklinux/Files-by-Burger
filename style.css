@@ -1,0 +1,56 @@
+/* 全局无衬线字体 */
+* {
+    font-family: Sans-serif;
+}
+
+/* 平滑滚动 */
+html,
+body {
+    scroll-behavior: smooth;
+}
+
+/* 列表项强制换行 */
+mdui-list-item {
+    word-wrap: break-word;
+}
+
+/* 卡片样式 */
+.card {
+    width: 95%;
+    margin-left: 2.5%;
+    margin-top: 24px;
+}
+
+/* 触摸屏链接样式 */
+a,
+mdui-top-app-bar-title {
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+    -webkit-user-select: none;
+    -moz-user-focus: none;
+    -moz-user-select: none;
+    user-select: none;
+}
+
+/* 响应式 */
+@media(min-width:640px) {
+    .card {
+        width: 70%;
+        margin-left: 15%;
+        margin-top: 32px;
+    }
+}
+
+@media(min-width:840px) {
+
+    /* 抽屉栏避免遮挡 */
+    #drawer mdui-list {
+        margin-top: 64px;
+    }
+}
+
+@media(min-width:960px) {
+    .card {
+        width: 50%;
+        margin-left: 25%;
+    }
+}
