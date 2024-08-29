@@ -1,4 +1,4 @@
-# Files-by-Burger
+# Files by Burger
 基于 Web 的 Android 文件管理器。
 <br>
 开发者：Burger Studio
