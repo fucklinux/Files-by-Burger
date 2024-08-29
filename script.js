@@ -319,7 +319,7 @@ function highlightItem(target) {
             // 激活列表项
             item.active = "active";
             // 滚动到该项目
-            scrollTo(0, item.offsetTop);
+            document.querySelector("mdui-layout-main").scrollTo(0, item.offsetTop);
         }
     });
 }
