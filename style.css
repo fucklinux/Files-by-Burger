@@ -27,7 +27,7 @@ mdui-list-item {
 }
 
 #multipleSelectDialog .card,
-#settings .card {
+#settingsDialog .card {
     width: 100%;
     margin-left: 0;
 }
