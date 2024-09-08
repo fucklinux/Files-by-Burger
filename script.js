@@ -454,8 +454,8 @@ icons = [
     { match: "xls,xlsx,xlsm,xlsb,csv", icon: "table_view" },
     { match: "ppt,pptx,pptm,pot,pps,ppa", icon: "pie_chart" },
     { match: "bak", icon: "settings_backup_restore" },
-    { match: "zip,rar,tar,gz,tgz,bz2,7z,xz", icon: "folder_zip" },
-    { match: "vdi,vhd,vmdk,vhdx,img,dmg", icon: "save" },
+    { match: "zip,rar,tar,gz,tgz,bz2,7z,xz,jar", icon: "folder_zip" },
+    { match: "vdi,vhd,vmdk,vhdx,img,dmg,qcow,qcow2", icon: "save" },
     { match: "iso", icon: "album" },
     { match: "nomedia", icon: "music_off" },
     { match: "apk,apkm,xapk,apks,obb", icon: "android" },
@@ -463,13 +463,15 @@ icons = [
     { match: "msi,inf,deb,rpm", icon: "install_desktop" },
     { match: "bat,cmd,ps1,sh,xml,html,css,js,php,json,vbs,vba,h,c,java,class,py,mhtml,mht,inc", icon: "code" },
     { match: "cfg,config,ini,dll,lib,so", icon: "settings" },
-    { match: "ipa,app", icon: "install_mobile" },
+    { match: "ipa,app,sis,sisx", icon: "install_mobile" },
     { match: "db,mdb,accdb,dbf,sql,sqlite,db3,mdf,myd,wdb", icon: "storage" },
     { match: "crdownload", icon: "downloading" },
     { match: "themes,msstyles", icon: "style" },
     { match: "vcf", icon: "contacts" },
     { match: "prop", icon: "info" },
-    { match: "pem,der,cer,crt,key,csr,p12,0", icon: "vpn_key" }
+    { match: "pem,der,cer,crt,key,csr,p12,0", icon: "vpn_key" },
+    { match: "ttf,otf,woff,woff2,eot", icon: "text_fields" },
+    { match: "crx", icon: "extension" }
 ];
 // 文件操作相关
 //
